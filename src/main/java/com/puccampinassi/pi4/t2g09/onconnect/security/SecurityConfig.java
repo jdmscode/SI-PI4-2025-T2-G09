@@ -6,18 +6,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
-            .and()
-            .httpBasic();
+            .csrf().disable() // permite POST sem CSRF token
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**").permitAll() // libera register/login
+                .anyRequest().authenticated() // outros endpoints precisam de login
+            )
+            .httpBasic(); // para autenticação básica em endpoints protegidos
 
         return http.build();
     }
@@ -27,3 +28,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

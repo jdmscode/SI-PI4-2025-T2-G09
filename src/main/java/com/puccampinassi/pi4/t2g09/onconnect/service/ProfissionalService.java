@@ -13,11 +13,23 @@ import java.util.Optional;
 public class ProfissionalService {
 
     private final ProfissionalRepository repository;
+    private final CrmService crmService; // Adicione o CrmService
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Profissional cadastrar(Profissional profissional) {
+        // Validação de CRM + nome
+        boolean crmValido = crmService.validarCrm(
+                profissional.getRegistroProfissional(),
+                profissional.getNomeCompleto()
+        );
+        if (!crmValido) {
+            throw new RuntimeException("CRM inválido, inativo ou nome não confere!");
+        }
+
         // Criptografar senha
         profissional.setSenha(passwordEncoder.encode(profissional.getSenha()));
+
+        // Salvar no banco
         return repository.save(profissional);
     }
 
