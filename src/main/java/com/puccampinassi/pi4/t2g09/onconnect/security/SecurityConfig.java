@@ -16,6 +16,7 @@ public class SecurityConfig {
             .csrf().disable() // permite POST sem CSRF token
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll() // libera register/login
+                .requestMatchers("/post/**").permitAll() // 👈 libera temporariamente o endpoint (Deve-se remover está linha após os testes)
                 .anyRequest().authenticated() // outros endpoints precisam de login
             )
             .httpBasic(); // para autenticação básica em endpoints protegidos
