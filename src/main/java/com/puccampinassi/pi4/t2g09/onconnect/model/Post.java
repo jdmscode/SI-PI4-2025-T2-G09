@@ -14,8 +14,8 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "posts")
-public class Posts {
+@Table(name = "post")
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +36,10 @@ public class Posts {
 
     @Column(nullable = false)
     private int qtdDislikes = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profissional_id", nullable = false)
+    private Profissional autor;
+
 
 }
