@@ -40,4 +40,10 @@ public class ProfissionalService {
         }
         return Optional.empty();
     }
+
+    public Long buscarIdPorEmail(String email) {
+        return repository.findByEmail(email)
+                .map(Profissional::getId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + email));
+    }  
 }
