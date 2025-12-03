@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OnConnect - Comentários</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-box">
+      <h1>Comentários</h1>
+      <p class="subtitle">
+        Post: <strong id="postTitulo"></strong>
+      </p>
+
+      <button class="secondary-btn" onclick="window.location.href='posts.html'">
+        ⬅ Voltar para Publicações
+      </button>
+
+      <div id="postConteudo" class="post-resumo"></div>
+
+      <hr />
+
+      <h2 class="section-title">Novo comentário</h2>
+      <form id="formNovoComentario">
+        <textarea
+          id="textoComentario"
+          rows="3"
+          placeholder="Escreva seu comentário..."
+          required
+        ></textarea>
+        <button type="submit">Comentar</button>
+      </form>
+
+      <hr />
+
+      <h2 class="section-title">Comentários existentes</h2>
+      <div id="listaComentarios" class="card-list">
+      </div>
+    </div>
+  </div>
+
+  <script src="js/comentarios.js"></script>
+</body>
+</html>

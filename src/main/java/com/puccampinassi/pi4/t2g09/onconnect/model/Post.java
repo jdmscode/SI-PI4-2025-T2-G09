@@ -1,5 +1,6 @@
 package com.puccampinassi.pi4.t2g09.onconnect.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,8 +15,10 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "posts")
-public class Posts {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "post")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +40,8 @@ public class Posts {
     @Column(nullable = false)
     private int qtdDislikes = 0;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profissional_id", nullable = false)
+    private Profissional autor;
 }
