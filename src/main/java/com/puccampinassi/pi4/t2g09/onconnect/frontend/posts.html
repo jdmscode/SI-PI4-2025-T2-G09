@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OnConnect - Nova publicação</title>
+  <link rel="stylesheet" href="css/home.css" />
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-box">
+      <h1>Nova publicação</h1>
+      <p class="subtitle">Compartilhe algo com outros profissionais</p>
+
+      <div class="menu">
+        <button onclick="window.location.href='home.html'">Voltar para o feed</button>
+        <button id="logoutBtn" class="logout">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="feed-wrapper">
+    <section class="feed-container">
+      <form id="postForm" class="feed-search" style="flex-direction:column; gap:12px;">
+        <input
+          id="titulo"
+          type="text"
+          placeholder="Título da publicação"
+          required
+        />
+
+        <textarea
+          id="texto"
+          rows="6"
+          placeholder="Escreva aqui o conteúdo da postagem..."
+          required
+          style="resize: vertical; padding:10px; border-radius:8px; border:1px solid #ccc;"
+        ></textarea>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+          <button
+            type="button"
+            onclick="window.location.href='home.html'"
+            style="background:#e5e7eb; color:#111;"
+          >
+            Cancelar
+          </button>
+          <button type="submit">
+            Publicar
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/posts.js"></script>
+</body>
+</html>

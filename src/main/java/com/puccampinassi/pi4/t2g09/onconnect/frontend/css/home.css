@@ -1,0 +1,225 @@
+/* ================== BASE DO PROJETO ================== */
+
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  margin: 0;
+  padding: 30px 0;
+  min-height: 100vh;
+}
+
+/* Container do título e menu */
+.form-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.form-box {
+  background: white;
+  padding: 40px 50px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 400px;
+  max-width: 90%;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+h1 {
+  color: #023e8a;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* Inputs padrões */
+input {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #0077b6;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 119, 182, 0.3);
+}
+
+/* Botões */
+button {
+  background: #0077b6;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #023e8a;
+}
+
+.redirect-text {
+  margin-top: 20px;
+  color: #333;
+  font-size: 14px;
+}
+
+.redirect-text a {
+  color: #0077b6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.redirect-text a:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Menu na home */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.menu button {
+  background: #0077b6;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu button:hover {
+  background: #023e8a;
+  transform: translateY(-2px);
+}
+
+.logout {
+  background: #d62828;
+}
+
+.logout:hover {
+  background: #9b2226;
+}
+
+/* ================== FEED ================== */
+
+/* Wrapper do feed abaixo da caixa de boas vindas */
+.feed-wrapper {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Caixa principal do feed */
+.feed-container {
+  background: white;
+  width: 700px;
+  max-width: 95%;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Barra de busca */
+.feed-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.feed-search input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.feed-search button {
+  width: auto;
+  padding: 12px 18px;
+}
+
+/* Lista de posts */
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card de cada post */
+.post-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 5px solid #0077b6;
+}
+
+.post-titulo {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #023e8a;
+}
+
+.post-meta {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.post-texto {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.post-footer {
+  font-size: 14px;
+  color: #0077b6;
+  font-weight: bold;
+}
+
+/* Paginação */
+.feed-pagination {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.feed-pagination button {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 14px;
+}

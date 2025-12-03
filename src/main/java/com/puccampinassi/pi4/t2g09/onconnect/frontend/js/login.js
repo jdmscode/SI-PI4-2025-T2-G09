@@ -12,8 +12,12 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     });
 
     if (response.ok) {
-      const user = await response.json(); // receber o objeto do backend
-      // 🔹 Salva no localStorage
+      const user = await response.json(); 
+
+      // 👇 AQUI É A CORREÇÃO
+      user.email = email;
+      user.senha = senha;
+
       localStorage.setItem("usuarioLogado", JSON.stringify(user));
 
       alert("Login realizado com sucesso!");

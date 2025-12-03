@@ -59,7 +59,7 @@ public class CrmService {
                 String profNome = prof.has("nome") ? prof.get("nome").asText() : "";
                 String profSituacao = prof.has("situacao") ? prof.get("situacao").asText() : "";
 
-                // Se quiser validar o status ativo, use: "Ativo".equalsIgnoreCase(profSituacao)
+                
                 if (crm.equals(profCrm) && nomesIguais(nome, profNome)) {
                     return true;
                 }

@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/reacao")
 @RequiredArgsConstructor
 public class ReacaoController {
 
@@ -21,9 +21,7 @@ public class ReacaoController {
 
     @PostMapping("/posts/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId, Principal principal) {
-        String email = principal.getName(); // obtém o email do usuário autenticado
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.likePost(userId, postId);
         return ResponseEntity.ok(Map.of(
                 "postId", postId,
@@ -34,9 +32,7 @@ public class ReacaoController {
 
     @PostMapping("/posts/{postId}/deslike")
     public ResponseEntity<?> deslikePost(@PathVariable Long postId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.deslikePost(userId, postId);
         return ResponseEntity.ok(Map.of(
                 "postId", postId,
@@ -44,61 +40,32 @@ public class ReacaoController {
                 "deslikeCount", total
         ));
     }
-    /* 
+
     @PostMapping("/posts/{postId}/like/toggle")
     public ResponseEntity<?> alternarLikePost(@PathVariable Long postId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
+        long total = reacaoService.alternarLikePost(userId, postId);
+        return ResponseEntity.ok(Map.of(
+                "postId", postId,
+                "likeCount", total
+        ));
+    }
 
-        long total = reacaoService.alternarLikePost(userId, postId);
-        return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "likeCount", total
-        ));
-    }
-    */
-    @PostMapping("/posts/{postId}/like/toggle")
-    public ResponseEntity<?> alternarLikePost(
-            @PathVariable Long postId,
-            @RequestParam Long userId
-    ) {
-        long total = reacaoService.alternarLikePost(userId, postId);
-        return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "likeCount", total
-        ));
-    }
-    /* 
     @PostMapping("/posts/{postId}/deslike/toggle")
     public ResponseEntity<?> alternarDeslikePost(@PathVariable Long postId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
+        long total = reacaoService.alternarDeslikePost(userId, postId);
+        return ResponseEntity.ok(Map.of(
+                "postId", postId,
+                "deslikeCount", total
+        ));
+    }
 
-        long total = reacaoService.alternarDeslikePost(userId, postId);
-        return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "deslikeCount", total
-        ));
-    }
-    */
-   @PostMapping("/posts/{postId}/deslike/toggle")
-    public ResponseEntity<?> alternarDeslikePost(
-            @PathVariable Long postId,
-            @RequestParam Long userId
-    ) {
-        long total = reacaoService.alternarDeslikePost(userId, postId);
-        return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "deslikeCount", total
-        ));
-    }
     // ---------- COMENTÁRIOS ----------
 
     @PostMapping("/comentarios/{comentarioId}/like")
     public ResponseEntity<?> likeComentario(@PathVariable Long comentarioId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.likeComentario(userId, comentarioId);
         return ResponseEntity.ok(Map.of(
                 "comentarioId", comentarioId,
@@ -109,9 +76,7 @@ public class ReacaoController {
 
     @PostMapping("/comentarios/{comentarioId}/deslike")
     public ResponseEntity<?> deslikeComentario(@PathVariable Long comentarioId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.deslikeComentario(userId, comentarioId);
         return ResponseEntity.ok(Map.of(
                 "comentarioId", comentarioId,
@@ -122,9 +87,7 @@ public class ReacaoController {
 
     @PostMapping("/comentarios/{comentarioId}/like/toggle")
     public ResponseEntity<?> alternarLikeComentario(@PathVariable Long comentarioId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.alternarLikeComentario(userId, comentarioId);
         return ResponseEntity.ok(Map.of(
                 "comentarioId", comentarioId,
@@ -134,9 +97,7 @@ public class ReacaoController {
 
     @PostMapping("/comentarios/{comentarioId}/deslike/toggle")
     public ResponseEntity<?> alternarDeslikeComentario(@PathVariable Long comentarioId, Principal principal) {
-        String email = principal.getName();
-        Long userId = profissionalService.buscarIdPorEmail(email);
-
+        Long userId = profissionalService.buscarIdPorEmail(principal.getName());
         long total = reacaoService.alternarDeslikeComentario(userId, comentarioId);
         return ResponseEntity.ok(Map.of(
                 "comentarioId", comentarioId,
@@ -144,3 +105,4 @@ public class ReacaoController {
         ));
     }
 }
+

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * Entidade que representa uma publicação feita por um usuário.
  * Inclui validações automáticas com Jakarta Validation e uso de Lombok
@@ -41,5 +43,12 @@ public class Post {
     @JoinColumn(name = "profissional_id", nullable = false)
     private Profissional autor;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
 }
