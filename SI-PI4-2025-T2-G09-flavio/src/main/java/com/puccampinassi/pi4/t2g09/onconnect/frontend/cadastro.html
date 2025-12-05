@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro | OnConnect</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-box">
+      <h1>Crie sua conta</h1>
+      <p class="subtitle">Preencha suas informações profissionais</p>
+      <form id="cadastroForm">
+        <input type="text" id="nomeCompleto" placeholder="Nome completo" required>
+        <input type="text" id="especialidade" placeholder="Especialidade" required>
+        <input type="text" id="cpf" placeholder="CPF" required>
+        <input type="text" id="registroProfissional" placeholder="CRM" required>
+        <input type="text" id="instituicao" placeholder="Instituição de Graduação">
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="senha" placeholder="Senha" required>
+        <button type="submit">Cadastrar</button>
+      </form>
+      <p class="redirect-text">
+        Já possui uma conta?
+        <a href="index.html">Faça login</a>
+      </p>
+    </div>
+  </div>
+  <script src="js/cadastro.js"></script>
+</body>
+</html>
