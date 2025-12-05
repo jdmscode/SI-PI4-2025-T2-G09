@@ -18,24 +18,48 @@
       </div>
     </div>
   </div>
+
   <main class="feed-wrapper">
     <section class="feed-container">
-      <form id="postForm" class="feed-search" style="flex-direction:column; gap:12px;">
+
+      <!--multipart para upload -->
+      <form id="postForm" enctype="multipart/form-data" class="feed-search"
+            style="flex-direction:column; gap:12px;">
+
+        <!-- Título -->
         <input
           id="titulo"
+          name="titulo"
           type="text"
           placeholder="Título da publicação"
           required
         />
 
+        <!-- Texto -->
         <textarea
           id="texto"
+          name="texto"
           rows="6"
           placeholder="Escreva aqui o conteúdo da postagem..."
           required
           style="resize: vertical; padding:10px; border-radius:8px; border:1px solid #ccc;"
         ></textarea>
 
+        <!-- Upload de imagem -->
+        <label style="font-weight:600; margin-top:5px;">Imagem (opcional):</label>
+        <input 
+          type="file"
+          id="imagem"
+          name="imagem"
+          accept="image/*"
+          style="padding:6px;"
+        />
+
+        <!-- Preview -->
+        <img id="previewImagem"
+             style="max-width:200px; margin-top:10px; display:none; border-radius:8px;" />
+
+        <!-- Botões -->
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
           <button
             type="button"
@@ -44,13 +68,30 @@
           >
             Cancelar
           </button>
-          <button type="submit">
-            Publicar
-          </button>
+
+          <button type="submit">Publicar</button>
         </div>
+
       </form>
     </section>
   </main>
+
+  <script>
+    // Preview da imagem antes de enviar
+    const inputImagem = document.getElementById("imagem");
+    const preview = document.getElementById("previewImagem");
+
+    inputImagem.addEventListener("change", () => {
+      const file = inputImagem.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+      }
+    });
+  </script>
+
   <script src="js/posts.js"></script>
 </body>
 </html>

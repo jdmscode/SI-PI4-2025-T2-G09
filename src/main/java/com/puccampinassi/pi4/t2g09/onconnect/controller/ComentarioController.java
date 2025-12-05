@@ -15,14 +15,12 @@ public class ComentarioController {
     public ComentarioController(ComentarioService comentarioService) {
         this.comentarioService = comentarioService;
     }
-
-    // GET /posts/{postId}/comentarios
+    
     @GetMapping("/{postId}/comentarios")
     public List<ComentarioDto> listarPorPost(@PathVariable Long postId) {
         return comentarioService.listarPorPost(postId);
     }
 
-    // POST /posts/{postId}/comentarios
     @PostMapping("/{postId}/comentarios")
     public ComentarioDto criarComentario(
             @PathVariable Long postId,

@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 "/comentarios.html",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/uploads/**"
                         ).permitAll()
 
                         // qualquer outra coisa precisa estar autenticado

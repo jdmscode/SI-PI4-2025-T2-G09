@@ -1,6 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL = "http://localhost:8080";
 
+  function resolveImageUrl(path) {
+    if (!path) return null;
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+
+    if (path.startsWith("/")) {
+      return `${API_BASE_URL}${path}`;
+    }
+
+    return `${API_BASE_URL}/${path}`;
+  }
+
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   if (!usuarioLogado) {
     window.location.href = "login.html";
@@ -75,8 +89,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const autorNome =
         post.autor?.nomeCompleto || post.nomeCompleto || "Autor desconhecido";
 
+      //cria a URL da imagem
+      const imgUrl = resolveImageUrl(post.imagemUrl);
+
+      //monta o HTML da imagem se existir
+      const imagemHtml = imgUrl
+      ? `<img src="${imgUrl}" alt="Imagem da publicação" class="post-detalhe-imagem" />`
+      : "";
+
       postDetalheEl.innerHTML = `
         <h2>${post.titulo}</h2>
+        ${imagemHtml}
         <p class="post-detalhe-meta">
           <strong>Autor:</strong> ${autorNome}
           ${dataFormatada ? ` · <strong>Data:</strong> ${dataFormatada}` : ""}

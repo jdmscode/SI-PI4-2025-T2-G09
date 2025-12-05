@@ -46,6 +46,9 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "imagem_url")
+    private String imagemUrl;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

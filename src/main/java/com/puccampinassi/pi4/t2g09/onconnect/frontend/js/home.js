@@ -50,6 +50,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaAtual = 0;
   let termoBuscaAtual = "";
 
+    // ===================== HELPER PARA URL DE IMAGEM =====================
+
+  function resolveImageUrl(path) {
+    if (!path) return null;
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+
+    if (path.startsWith("/")) {
+      return `${API_BASE_URL}${path}`;
+    }
+
+    return `${API_BASE_URL}/${path}`;
+  }
+
   // ===================== FUNÇÃO PARA ENVIAR REAÇÃO =====================
 
   async function enviarReacaoPost(postId, tipo) {
@@ -122,6 +138,17 @@ document.addEventListener("DOMContentLoaded", () => {
     post.texto.length > limiteCaracteres
       ? post.texto.slice(0, limiteCaracteres) + "..."
       : post.texto;
+
+  // ===== IMAGEM DO POST =====
+  const imgUrl = resolveImageUrl(post.imagemUrl);
+
+  if (imgUrl) {
+    const img = document.createElement("img");
+    img.src = imgUrl;
+    img.alt = "Imagem da publicação";
+    img.classList.add("post-imagem");
+    card.appendChild(img);
+  }
 
   // ===== FOOTER DE REAÇÕES NO CANTO INFERIOR ESQUERDO =====
   const footer = document.createElement("div");

@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "login.html";
     return;
   }
+  
   // helper para montar Authorization Basic
   function getAuthHeader() {
     if (!usuarioLogado.email || !usuarioLogado.senha) {
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("postForm");
   const tituloInput = document.getElementById("titulo");
   const textoInput = document.getElementById("texto");
+  const imagemInput = document.getElementById("imagem");
 
   if (!form) return;
 
@@ -40,27 +42,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const titulo = tituloInput.value.trim();
     const texto = textoInput.value.trim();
+    const arquivo = imagemInput ? imagemInput.files[0] : null;
 
     if (!titulo || !texto) {
       alert("Preencha título e conteúdo da publicação.");
       return;
     }
 
-    const payload = {
-      titulo: titulo,
-      texto: texto
-    };
-
     try {
-      const response = await fetch(`${API_BASE_URL}/post`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeader()
-        },
-        body: JSON.stringify(payload)
-      });
+      let response;
+
+      // com imagem → multipart para /post/upload
+      if (arquivo) {
+        const formData = new FormData();
+        formData.append("titulo", titulo);
+        formData.append("texto", texto);
+        formData.append("imagem", arquivo);
+
+        response = await fetch(`${API_BASE_URL}/post/upload`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            ...getAuthHeader()
+          },
+          body: formData
+        });
+
+      // sem imagem → JSON para /post
+      } else {
+        const payload = { titulo, texto };
+
+        response = await fetch(`${API_BASE_URL}/post`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeader()
+          },
+          body: JSON.stringify(payload)
+        });
+      }
 
       if (!response.ok) {
         const msg = `Erro ao criar publicação. Código ${response.status}`;

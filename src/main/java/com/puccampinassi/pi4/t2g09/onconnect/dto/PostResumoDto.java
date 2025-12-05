@@ -10,5 +10,6 @@ public record PostResumoDto(
         int qtdDislikes,
         Long autorId,
         String nomeCompleto,
+        String imagemUrl, 
         LocalDateTime createdAt
 ) {}

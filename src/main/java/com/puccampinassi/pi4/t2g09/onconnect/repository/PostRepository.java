@@ -21,6 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.qtdDislikes,
             p.autor.id,
             p.autor.nomeCompleto,
+            p.imagemUrl,
             p.createdAt
         )
         from Post p
@@ -49,6 +50,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.qtdDislikes,
             p.autor.id,
             p.autor.nomeCompleto,
+            p.imagemUrl,
             p.createdAt
         )
         from Post p
