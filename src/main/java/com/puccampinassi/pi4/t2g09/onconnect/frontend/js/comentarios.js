@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE = "http://localhost:8081";
+  const API_BASE_URL = "http://localhost:8080";
 
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   if (!usuarioLogado) {
@@ -7,142 +7,216 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const postId = params.get("postId");
-
-  if (!postId) {
-    alert("Post não informado.");
-    window.location.href = "posts.html";
-    return;
+  function getAuthHeader() {
+    if (!usuarioLogado.email || !usuarioLogado.senha) {
+      return {};
+    }
+    const credenciaisBase64 = btoa(
+      `${usuarioLogado.email}:${usuarioLogado.senha}`
+    );
+    return {
+      Authorization: `Basic ${credenciaisBase64}`,
+    };
   }
 
-  const postTituloSpan = document.getElementById("postTitulo");
-  const postConteudoDiv = document.getElementById("postConteudo");
-  const listaComentariosDiv = document.getElementById("listaComentarios");
-  const formNovoComentario = document.getElementById("formNovoComentario");
-  const textoComentarioInput = document.getElementById("textoComentario");
+  // pega o postId da URL
+  const params = new URLSearchParams(window.location.search);
+  const rawPostId = params.get("postId");
 
-  // Carrega dados iniciais
-  carregarPost();
-  carregarComentarios();
+    const postId = rawPostId ? Number(rawPostId) : null;
 
-  formNovoComentario.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const texto = textoComentarioInput.value.trim();
-    if (!texto) {
-      alert("Digite um comentário.");
+    if (!postId || Number.isNaN(postId)) {
+      console.error("postId inválido na URL:", rawPostId);
+      alert("Publicação inválida. Volte para o feed e tente novamente.");
+      window.location.href = "home.html";
       return;
     }
 
-    const novoComentario = {
-      texto,
+  const postDetalheEl = document.getElementById("postDetalhe");
+  const comentariosContainer = document.getElementById("comentariosContainer");
+  const comentarioInput = document.getElementById("comentarioInput");
+  const enviarComentarioBtn = document.getElementById("enviarComentarioBtn");
+  const comentarioCountSpan = document.getElementById("comentarioCount");
+
+  if (!postId) {
+    alert("Post não informado.");
+    window.location.href = "home.html";
+    return;
+  }
+
+  // Carregar detalhes do post
+  async function carregarPost() {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/post/${postId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...getAuthHeader(),
+        },
+      });
+
+      if (!resp.ok) {
+        throw new Error(`Erro ao buscar post: ${resp.status}`);
+      }
+
+      const post = await resp.json();
+
+      const dataCriacao = post.createdAt
+        ? new Date(post.createdAt)
+        : null;
+
+      const dataFormatada = dataCriacao
+        ? `${dataCriacao.toLocaleDateString("pt-BR")} ${dataCriacao.toLocaleTimeString(
+            "pt-BR",
+            { hour: "2-digit", minute: "2-digit" }
+          )}`
+        : "";
+
+      const autorNome =
+        post.autor?.nomeCompleto || post.nomeCompleto || "Autor desconhecido";
+
+      postDetalheEl.innerHTML = `
+        <h2>${post.titulo}</h2>
+        <p class="post-detalhe-meta">
+          <strong>Autor:</strong> ${autorNome}
+          ${dataFormatada ? ` · <strong>Data:</strong> ${dataFormatada}` : ""}
+        </p>
+        <p class="post-detalhe-texto">${post.texto}</p>
+        <p class="post-detalhe-reacoes">
+          👍 ${post.qtdLikes ?? 0} &nbsp;&nbsp; 👎 ${post.qtdDislikes ?? 0}
+        </p>
+      `;
+    } catch (erro) {
+      console.error(erro);
+      postDetalheEl.innerHTML =
+        "<p>Erro ao carregar detalhes da publicação.</p>";
+    }
+  }
+
+  // Carregar comentários
+  async function carregarComentarios() {
+    try {
+      const resp = await fetch(
+        `${API_BASE_URL}/posts/${postId}/comentarios`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeader(),
+          },
+        }
+      );
+
+      if (!resp.ok) {
+        throw new Error(`Erro ao buscar comentários: ${resp.status}`);
+      }
+
+      const lista = await resp.json();
+
+      comentariosContainer.innerHTML = "";
+
+      if (!Array.isArray(lista) || lista.length === 0) {
+        comentarioCountSpan.textContent = "0";
+        comentariosContainer.innerHTML =
+          "<p>Seja o primeiro a comentar!</p>";
+        return;
+      }
+
+      comentarioCountSpan.textContent = lista.length.toString();
+
+      lista.forEach((c) => {
+        const card = document.createElement("article");
+        card.classList.add("comentario-card");
+
+        const autorNome =
+          c.autor?.nomeCompleto || "Usuário";
+
+        const dataCriacao = c.createdAt ? new Date(c.createdAt) : null;
+        const dataFormatada = dataCriacao
+          ? `${dataCriacao.toLocaleDateString("pt-BR")} ${dataCriacao.toLocaleTimeString(
+              "pt-BR",
+              { hour: "2-digit", minute: "2-digit" }
+            )}`
+          : "";
+
+        const isDoUsuarioLogado =
+          c.autor?.id === usuarioLogado.id ||
+          c.autorId === usuarioLogado.id;
+
+        // estrutura HTML básica
+        card.innerHTML = `
+          <div class="comentario-autor-linha">
+            <span class="comentario-autor">${autorNome}</span>
+            <span class="comentario-data">${dataFormatada}</span>
+          </div>
+          <div class="comentario-texto">${c.texto || ""}</div>
+          <div class="comentario-acoes"></div>
+        `;
+
+        const acoesDiv = card.querySelector(".comentario-acoes");
+
+        comentariosContainer.appendChild(card);
+      });
+    } catch (erro) {
+      console.error(erro);
+      comentariosContainer.innerHTML =
+        "<p>Erro ao carregar comentários.</p>";
+      comentarioCountSpan.textContent = "0";
+    }
+  }
+
+  // Enviar novo comentário
+  async function enviarComentario() {
+    const texto = comentarioInput.value.trim();
+    if (!texto) {
+      alert("Digite um comentário antes de enviar.");
+      return;
+    }
+
+    const payload = {
+      texto: texto,
       autor: {
-        id: usuarioLogado.id,
+        id: usuarioLogado.id, // usa o ID do profissional logado
       },
     };
 
     try {
-      const resp = await fetch(`${API_BASE}/posts/${postId}/comentarios`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(novoComentario),
-      });
+      const resp = await fetch(
+        `${API_BASE_URL}/posts/${postId}/comentarios`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeader(),
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!resp.ok) {
-        const erro = await resp.json().catch(() => ({}));
-        console.error("Erro ao criar comentário:", erro);
-        alert("Erro ao criar comentário.");
-        return;
+        throw new Error(`Erro ao salvar comentário: ${resp.status}`);
       }
 
-      textoComentarioInput.value = "";
-      carregarComentarios();
-    } catch (err) {
-      console.error(err);
-      alert("Erro de conexão ao criar comentário.");
+      comentarioInput.value = "";
+      await carregarComentarios();
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao enviar comentário.");
+    }
+  }
+
+  enviarComentarioBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    enviarComentario();
+  });
+
+  comentarioInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && event.ctrlKey) {
+      event.preventDefault();
+      enviarComentario();
     }
   });
 
-  async function carregarPost() {
-    try {
-      const resp = await fetch(`${API_BASE}/post`);
-      if (!resp.ok) {
-        postConteudoDiv.innerHTML =
-          "<p>Erro ao carregar detalhes do post.</p>";
-        return;
-      }
-
-      const posts = await resp.json();
-      const post = posts.find((p) => String(p.id) === String(postId));
-
-      if (!post) {
-        postConteudoDiv.innerHTML = "<p>Post não encontrado.</p>";
-        return;
-      }
-
-      postTituloSpan.textContent = post.titulo;
-
-      const autorNome =
-        post.autor && post.autor.nomeCompleto
-          ? post.autor.nomeCompleto
-          : "Autor desconhecido";
-
-      postConteudoDiv.innerHTML = `
-        <p class="card-text">${post.texto}</p>
-        <p class="card-meta">
-          Por <strong>${autorNome}</strong> • Likes: ${post.qtdLikes ?? 0} • Dislikes: ${post.qtdDislikes ?? 0}
-        </p>
-      `;
-    } catch (err) {
-      console.error(err);
-      postConteudoDiv.innerHTML = "<p>Erro de conexão ao carregar post.</p>";
-    }
-  }
-
-  async function carregarComentarios() {
-    listaComentariosDiv.innerHTML = "<p>Carregando comentários...</p>";
-
-    try {
-      const resp = await fetch(`${API_BASE}/posts/${postId}/comentarios`);
-      if (!resp.ok) {
-        listaComentariosDiv.innerHTML =
-          "<p>Erro ao carregar comentários.</p>";
-        return;
-      }
-
-      const comentarios = await resp.json();
-
-      if (!comentarios.length) {
-        listaComentariosDiv.innerHTML =
-          "<p>Não há comentários para este post ainda.</p>";
-        return;
-      }
-
-      listaComentariosDiv.innerHTML = "";
-
-      comentarios.forEach((comentario) => {
-        const card = document.createElement("div");
-        card.classList.add("card");
-
-        const autorNome =
-          comentario.autor && comentario.autor.nomeCompleto
-            ? comentario.autor.nomeCompleto
-            : "Autor desconhecido";
-
-        card.innerHTML = `
-          <p class="card-text">${comentario.texto}</p>
-          <p class="card-meta">Por <strong>${autorNome}</strong></p>
-        `;
-
-        listaComentariosDiv.appendChild(card);
-      });
-    } catch (err) {
-      console.error(err);
-      listaComentariosDiv.innerHTML =
-        "<p>Erro de conexão ao carregar comentários.</p>";
-    }
-  }
+  carregarPost();
+  carregarComentarios();
 });

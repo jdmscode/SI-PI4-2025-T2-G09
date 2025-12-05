@@ -1,38 +1,42 @@
 package com.puccampinassi.pi4.t2g09.onconnect.controller;
 
-import com.puccampinassi.pi4.t2g09.onconnect.model.Comentario;
-import com.puccampinassi.pi4.t2g09.onconnect.model.Post;
+import com.puccampinassi.pi4.t2g09.onconnect.dto.ComentarioDto;
 import com.puccampinassi.pi4.t2g09.onconnect.service.ComentarioService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/posts/{postId}/comentarios")
+@RequestMapping("/posts")
 public class ComentarioController {
 
     private final ComentarioService comentarioService;
 
-    @PostMapping
-    public ResponseEntity<Comentario> criar(
-            @PathVariable Long postId,
-            @RequestBody @Valid Comentario comentario) {
-
-        Post post = new Post();
-        post.setId(postId);                 // associa o comentário ao post principal
-        comentario.setPostPrincipal(post);
-
-        Comentario salvo = comentarioService.salvar(comentario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+    public ComentarioController(ComentarioService comentarioService) {
+        this.comentarioService = comentarioService;
     }
 
-    @GetMapping
-    public List<Comentario> listarPorPost(@PathVariable Long postId) {
+    // GET /posts/{postId}/comentarios
+    @GetMapping("/{postId}/comentarios")
+    public List<ComentarioDto> listarPorPost(@PathVariable Long postId) {
         return comentarioService.listarPorPost(postId);
     }
+
+    // POST /posts/{postId}/comentarios
+    @PostMapping("/{postId}/comentarios")
+    public ComentarioDto criarComentario(
+            @PathVariable Long postId,
+            @RequestBody NovoComentarioRequest request
+    ) {
+        return comentarioService.criarComentario(
+                postId,
+                request.autor().id(),
+                request.texto()
+        );
+    }
+
+    public record NovoComentarioRequest(String texto, Autor autor) {
+        public record Autor(Long id) {}
+    }
 }
+

@@ -1,114 +1,84 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE = "http://localhost:8081";
+  const API_BASE_URL = "http://localhost:8080";
 
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
+  // se não estiver logado, manda para o login
   if (!usuarioLogado) {
     window.location.href = "login.html";
     return;
   }
+  // helper para montar Authorization Basic
+  function getAuthHeader() {
+    if (!usuarioLogado.email || !usuarioLogado.senha) {
+      return {};
+    }
 
-  const nomeUsuarioSpan = document.getElementById("nomeUsuario");
-  const formNovoPost = document.getElementById("formNovoPost");
-  const listaPostsDiv = document.getElementById("listaPosts");
+    const credenciaisBase64 = btoa(`${usuarioLogado.email}:${usuarioLogado.senha}`);
+    return {
+      Authorization: `Basic ${credenciaisBase64}`
+    };
+  }
 
-  nomeUsuarioSpan.textContent = usuarioLogado.nomeCompleto || "Usuário";
+  // botão de logout reaproveitado
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("usuarioLogado");
+      window.location.href = "login.html";
+    });
+  }
 
-  carregarPosts();
+  const form = document.getElementById("postForm");
+  const tituloInput = document.getElementById("titulo");
+  const textoInput = document.getElementById("texto");
 
-  formNovoPost.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (!form) return;
 
-    const titulo = document.getElementById("titulo").value.trim();
-    const texto = document.getElementById("texto").value.trim();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const titulo = tituloInput.value.trim();
+    const texto = textoInput.value.trim();
 
     if (!titulo || !texto) {
-      alert("Preencha título e texto.");
+      alert("Preencha título e conteúdo da publicação.");
       return;
     }
 
-    const novoPost = {
-      titulo,
-      texto,
-      autor: {
-        id: usuarioLogado.id,
-      },
+    const payload = {
+      titulo: titulo,
+      texto: texto
     };
 
     try {
-      const resp = await fetch(`${API_BASE}/post`, {
+      const response = await fetch(`${API_BASE_URL}/post`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          ...getAuthHeader()
         },
-        body: JSON.stringify(novoPost),
+        body: JSON.stringify(payload)
       });
 
-      if (!resp.ok) {
-        const erro = await resp.json().catch(() => ({}));
-        console.error("Erro ao criar post:", erro);
-        alert("Erro ao criar publicação.");
+      if (!response.ok) {
+        const msg = `Erro ao criar publicação. Código ${response.status}`;
+        console.error(msg);
+        alert(msg);
         return;
       }
 
-      formNovoPost.reset();
-      carregarPosts();
-    } catch (err) {
-      console.error(err);
-      alert("Erro de conexão ao criar publicação.");
+      const postCriado = await response.json();
+      console.log("Post criado:", postCriado);
+
+      alert("Publicação criada com sucesso!");
+      // depois de criar, volta para o feed
+      window.location.href = "home.html";
+
+    } catch (erro) {
+      console.error("Erro na requisição:", erro);
+      alert("Ocorreu um erro ao criar a publicação. Tente novamente.");
     }
   });
-
-  async function carregarPosts() {
-    listaPostsDiv.innerHTML = "<p>Carregando publicações...</p>";
-
-    try {
-      const resp = await fetch(`${API_BASE}/post`);
-      if (!resp.ok) {
-        listaPostsDiv.innerHTML = "<p>Erro ao carregar publicações.</p>";
-        return;
-      }
-
-      const posts = await resp.json();
-
-      if (!posts.length) {
-        listaPostsDiv.innerHTML = "<p>Não há publicações cadastradas ainda.</p>";
-        return;
-      }
-
-      listaPostsDiv.innerHTML = "";
-
-      posts.forEach((post) => {
-        const card = document.createElement("div");
-        card.classList.add("card");
-
-        const autorNome =
-          post.autor && post.autor.nomeCompleto
-            ? post.autor.nomeCompleto
-            : "Autor desconhecido";
-
-        card.innerHTML = `
-          <h3>${post.titulo}</h3>
-          <p class="card-text">${post.texto}</p>
-          <p class="card-meta">
-            Por <strong>${autorNome}</strong> • Likes: ${post.qtdLikes ?? 0} • Dislikes: ${post.qtdDislikes ?? 0}
-          </p>
-          <button class="secondary-btn" data-id="${post.id}">
-            Ver comentários
-          </button>
-        `;
-
-        const btnComentarios = card.querySelector("button");
-        btnComentarios.addEventListener("click", () => {
-          window.location.href = `comentarios.html?postId=${post.id}`;
-        });
-
-        listaPostsDiv.appendChild(card);
-      });
-    } catch (err) {
-      console.error(err);
-      listaPostsDiv.innerHTML =
-        "<p>Erro de conexão ao carregar publicações.</p>";
-    }
-  }
 });

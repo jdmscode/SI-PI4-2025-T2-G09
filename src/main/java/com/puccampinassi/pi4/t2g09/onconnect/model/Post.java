@@ -1,10 +1,11 @@
 package com.puccampinassi.pi4.t2g09.onconnect.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 /**
  * Entidade que representa uma publicação feita por um usuário.
@@ -15,9 +16,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "post")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Post {
 
     @Id
@@ -40,8 +39,16 @@ public class Post {
     @Column(nullable = false)
     private int qtdDislikes = 0;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profissional_id", nullable = false)
     private Profissional autor;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }

@@ -32,7 +32,7 @@ public class TestaConexaoSQL implements CommandLineRunner {
             try (Statement stmt = conn.createStatement();
                  ResultSet rs = stmt.executeQuery("SELECT NOW() AS data_hora")) {
                 if (rs.next()) {
-                    System.out.println("🕓 MySQL respondeu: " + rs.getString("data_hora"));
+                    System.out.println("MySQL respondeu: " + rs.getString("data_hora"));
                 }
             }
 

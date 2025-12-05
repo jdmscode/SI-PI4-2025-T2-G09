@@ -13,11 +13,23 @@ import java.util.Optional;
 public class ProfissionalService {
 
     private final ProfissionalRepository repository;
+    private final CrmService crmService; // Adicione o CrmService
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Profissional cadastrar(Profissional profissional) {
+        // Validação de CRM + nome comentado para teste
+        // boolean crmValido = crmService.validarCrm(
+        //         profissional.getRegistroProfissional(),
+        //         profissional.getNomeCompleto()
+        // );
+        // if (!crmValido) {
+        //     throw new RuntimeException("CRM inválido, inativo ou nome não confere!");
+        // }
+
         // Criptografar senha
         profissional.setSenha(passwordEncoder.encode(profissional.getSenha()));
+
+        // Salvar no banco
         return repository.save(profissional);
     }
 
@@ -28,4 +40,10 @@ public class ProfissionalService {
         }
         return Optional.empty();
     }
+
+    public Long buscarIdPorEmail(String email) {
+        return repository.findByEmail(email)
+                .map(Profissional::getId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + email));
+    }  
 }
