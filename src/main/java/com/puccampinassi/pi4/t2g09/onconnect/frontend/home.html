@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OnConnect - Home</title>
+  <link rel="stylesheet" href="css/home.css" />
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-box">
+      <h1>Bem-vindo, <span id="nomeUsuario"></span> 👋</h1>
+      <p class="subtitle">Projeto em andamento — OnConnect 🚀</p>
+
+      <div class="menu">
+        <button onclick="window.location.href='posts.html'">Nova Publicação</button>
+        <button onclick="window.location.href='perfil.html'">Meu Perfil</button>
+        <button id="logoutBtn" class="logout">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área do feed -->
+  <main class="feed-wrapper">
+    <section class="feed-container">
+      <!-- Barra de busca -->
+      <form id="searchForm" class="feed-search">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Buscar postagens pelo título..."
+        />
+        <button type="submit">Buscar</button>
+      </form>
+
+      <!-- Lista de posts -->
+      <section id="postsContainer" class="posts-list">
+        <!-- Os cards de post serão inseridos aqui via JS -->
+      </section>
+
+      <!-- Paginação -->
+      <div class="feed-pagination">
+        <button id="prevPageBtn">« Anterior</button>
+        <span id="paginaAtual">Página 1</span>
+        <button id="nextPageBtn">Próxima »</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/home.js"></script>
+</body>
+</html>
