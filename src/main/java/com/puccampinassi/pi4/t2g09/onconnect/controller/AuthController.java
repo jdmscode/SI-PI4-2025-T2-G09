@@ -22,11 +22,11 @@ public class AuthController {
         return ResponseEntity.ok(novo);
     }
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody Profissional profissional) {
-    return service.autenticar(profissional.getEmail(), profissional.getSenha())
-            .<ResponseEntity<?>>map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(401).body("Credenciais inválidas"));
-}
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Profissional profissional) {
+        return service.autenticar(profissional.getEmail(), profissional.getSenha())
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(401).body("Credenciais inválidas"));
+    }
 
 }

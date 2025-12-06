@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comentários - OnConnect</title>
+
+  <!-- Reaproveita o mesmo CSS do home -->
+  <link rel="stylesheet" href="css/home.css" />
+
+  <style>
+    /* Container principal reaproveita o layout do feed */
+    .comentarios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .comentarios-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .voltar-link {
+      font-size: 0.95rem;
+      color: #0056b3;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .post-detalhe-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .post-detalhe-meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .post-detalhe-texto {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .post-detalhe-reacoes {
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .comentario-form {
+      margin-top: 12px;
+      margin-bottom: 20px;
+    }
+
+    .comentario-form textarea {
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .comentario-form button {
+      margin-top: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .comentario-form button:hover {
+      background: #0056b3;
+      transform: translateY(-1px);
+    }
+
+    .comentario-form button:active {
+      transform: translateY(0);
+    }
+
+    .comentarios-contador {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .comentario-card {
+      background: #f5f7fb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      opacity: 0;
+      transform: translateY(4px);
+      animation: fadeInUp 0.2s ease forwards;
+    }
+
+    .comentario-autor-linha {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .comentario-autor {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .comentario-data {
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    .comentario-texto {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .comentario-acoes {
+      font-size: 0.8rem;
+      text-align: right;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="feed-wrapper">
+    <section class="feed-container">
+
+      <div class="comentarios-header">
+        <h2>Comentários da Publicação</h2>
+        <span class="voltar-link" onclick="window.location.href='home.html'">
+          ⬅ Voltar para o feed
+        </span>
+      </div>
+
+      <!-- Card com os detalhes do post -->
+      <section id="postDetalhe" class="post-detalhe-card">
+      </section>
+
+      <!-- Form de novo comentário -->
+      <section class="comentario-form">
+        <h3>Adicionar comentário</h3>
+        <textarea
+          id="comentarioInput"
+          placeholder="Escreva seu comentário aqui..."
+        ></textarea>
+        <button id="enviarComentarioBtn">Comentar</button>
+      </section>
+
+      <!-- Contador de comentários -->
+      <div class="comentarios-contador">
+        Total de comentários: <span id="comentarioCount">0</span>
+      </div>
+
+      <!-- Lista de comentários -->
+      <section id="comentariosContainer">
+      </section>
+
+    </section>
+  </main>
+
+  <script src="js/comentarios.js"></script>
+</body>
+</html>

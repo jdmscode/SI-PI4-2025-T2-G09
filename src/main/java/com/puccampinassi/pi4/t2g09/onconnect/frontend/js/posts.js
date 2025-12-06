@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "login.html";
     return;
   }
-
   // helper para montar Authorization Basic
   function getAuthHeader() {
     if (!usuarioLogado.email || !usuarioLogado.senha) {
@@ -49,23 +48,39 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // monta FormData para enviar multipart/form-data
-    const formData = new FormData();
-    formData.append("titulo", titulo);
-    formData.append("texto", texto);
-    if (arquivo) {
-      formData.append("imagem", arquivo);
-    }
-
     try {
-      const response = await fetch(`${API_BASE_URL}/post/upload`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          ...getAuthHeader()
-        },
-        body: formData
-      });
+      let response;
+
+      // com imagem → multipart para /post/upload
+      if (arquivo) {
+        const formData = new FormData();
+        formData.append("titulo", titulo);
+        formData.append("texto", texto);
+        formData.append("imagem", arquivo);
+
+        response = await fetch(`${API_BASE_URL}/post/upload`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            ...getAuthHeader()
+          },
+          body: formData
+        });
+
+      // sem imagem → JSON para /post
+      } else {
+        const payload = { titulo, texto };
+
+        response = await fetch(`${API_BASE_URL}/post`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeader()
+          },
+          body: JSON.stringify(payload)
+        });
+      }
 
       if (!response.ok) {
         const msg = `Erro ao criar publicação. Código ${response.status}`;

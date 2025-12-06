@@ -1,5 +1,6 @@
 package com.puccampinassi.pi4.t2g09.onconnect.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

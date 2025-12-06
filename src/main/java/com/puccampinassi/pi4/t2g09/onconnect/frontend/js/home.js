@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaAtual = 0;
   let termoBuscaAtual = "";
 
-  // ===================== HELPER PARA URL DE IMAGEM =====================
+    // ===================== HELPER PARA URL DE IMAGEM =====================
 
   function resolveImageUrl(path) {
     if (!path) return null;
@@ -97,148 +97,154 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===================== FUNÇÃO PARA MONTAR O CARD DO POST =====================
 
   function criarCardPost(post) {
-    const card = document.createElement("article");
-    card.classList.add("post-card");
+  const card = document.createElement("article");
+  card.classList.add("post-card");
 
-    // deixa o card como "base" para o footer absoluto
-    card.style.position = "relative";
-    card.style.paddingBottom = "40px"; // espaço pro footer não ficar em cima do texto
+  // deixa o card como "base" para o footer absoluto
+  card.style.position = "relative";
+  card.style.paddingBottom = "40px"; // espaço pro footer não ficar em cima do texto
 
-    // Título
-    const titulo = document.createElement("h2");
-    titulo.classList.add("post-titulo");
-    titulo.textContent = post.titulo;
+  // Título
+  const titulo = document.createElement("h2");
+  titulo.classList.add("post-titulo");
+  titulo.textContent = post.titulo;
 
-    // Meta
-    const meta = document.createElement("div");
-    meta.classList.add("post-meta");
-    const data = new Date(post.createdAt);
-    meta.textContent = `Por ${post.nomeCompleto} · ${data.toLocaleDateString(
-      "pt-BR"
-    )} ${data.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    })}`;
-
-    // Imagem (se houver)
-    let imagemElemento = null;
-    const urlImagem = resolveImageUrl(post.imagemUrl);
-    if (urlImagem) {
-      imagemElemento = document.createElement("img");
-      imagemElemento.src = urlImagem;
-      imagemElemento.alt = `Imagem da postagem "${post.titulo}"`;
-      imagemElemento.style.width = "100%";
-      imagemElemento.style.maxHeight = "300px";
-      imagemElemento.style.objectFit = "cover";
-      imagemElemento.style.borderRadius = "8px";
-      imagemElemento.style.marginTop = "8px";
+  // quando clicar no título, abre a página de comentários
+  titulo.addEventListener("click", () => {
+    if (post.id != null) {
+      window.location.href = `comentarios.html?postId=${post.id}`;
+    } else {
+      console.error("Post sem ID:", post);
+      alert("Não foi possível abrir os comentários: post sem ID.");
     }
+  });
 
-    // Texto
-    const texto = document.createElement("p");
-    texto.classList.add("post-texto");
-    const limiteCaracteres = 200;
-    texto.textContent =
-      post.texto.length > limiteCaracteres
-        ? post.texto.slice(0, limiteCaracteres) + "..."
-        : post.texto;
+  // Meta
+  const meta = document.createElement("div");
+  meta.classList.add("post-meta");
+  const data = new Date(post.createdAt);
+  meta.textContent = `Por ${post.nomeCompleto} · ${data.toLocaleDateString(
+    "pt-BR"
+  )} ${data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })}`;
 
-    // ===== FOOTER DE REAÇÕES NO CANTO INFERIOR ESQUERDO =====
-    const footer = document.createElement("div");
-    footer.style.position = "absolute";
-    footer.style.left = "16px";
-    footer.style.bottom = "10px";
-    footer.style.display = "flex";
-    footer.style.alignItems = "center";
-    footer.style.gap = "12px";
-    footer.style.fontSize = "0.9rem";
+  // Texto
+  const texto = document.createElement("p");
+  texto.classList.add("post-texto");
+  const limiteCaracteres = 200;
+  texto.textContent =
+    post.texto.length > limiteCaracteres
+      ? post.texto.slice(0, limiteCaracteres) + "..."
+      : post.texto;
 
-    // Like
-    const likeWrapper = document.createElement("span");
-    likeWrapper.style.display = "inline-flex";
-    likeWrapper.style.alignItems = "center";
-    likeWrapper.style.gap = "4px";
+  // ===== IMAGEM DO POST =====
+  const imgUrl = resolveImageUrl(post.imagemUrl);
 
-    const likeBtn = document.createElement("span");
-    likeBtn.textContent = "👍";
-    likeBtn.style.cursor = "pointer";
-    likeBtn.style.fontSize = "1.1rem";
-
-    const likeCountSpan = document.createElement("span");
-    likeCountSpan.textContent = post.qtdLikes;
-
-    // Deslike
-    const deslikeWrapper = document.createElement("span");
-    deslikeWrapper.style.display = "inline-flex";
-    deslikeWrapper.style.alignItems = "center";
-    deslikeWrapper.style.gap = "4px";
-
-    const deslikeBtn = document.createElement("span");
-    deslikeBtn.textContent = "👎";
-    deslikeBtn.style.cursor = "pointer";
-    deslikeBtn.style.fontSize = "1.1rem";
-
-    const deslikeCountSpan = document.createElement("span");
-    deslikeCountSpan.textContent = post.qtdDislikes;
-
-    // Eventos de clique
-    likeBtn.addEventListener("click", async () => {
-      try {
-        likeBtn.style.pointerEvents = "none";
-        deslikeBtn.style.pointerEvents = "none";
-
-        const data = await enviarReacaoPost(post.id, "like");
-        if (typeof data.likeCount === "number") {
-          likeCountSpan.textContent = data.likeCount;
-        }
-      } catch (erro) {
-        console.error(erro);
-        alert("Erro ao registrar like. Tente novamente.");
-      } finally {
-        likeBtn.style.pointerEvents = "auto";
-        deslikeBtn.style.pointerEvents = "auto";
-      }
-    });
-
-    deslikeBtn.addEventListener("click", async () => {
-      try {
-        likeBtn.style.pointerEvents = "none";
-        deslikeBtn.style.pointerEvents = "none";
-
-        const data = await enviarReacaoPost(post.id, "deslike");
-        if (typeof data.deslikeCount === "number") {
-          deslikeCountSpan.textContent = data.deslikeCount;
-        }
-      } catch (erro) {
-        console.error(erro);
-        alert("Erro ao registrar deslike. Tente novamente.");
-      } finally {
-        likeBtn.style.pointerEvents = "auto";
-        deslikeBtn.style.pointerEvents = "auto";
-      }
-    });
-
-    // Monta wrappers
-    likeWrapper.appendChild(likeBtn);
-    likeWrapper.appendChild(likeCountSpan);
-
-    deslikeWrapper.appendChild(deslikeBtn);
-    deslikeWrapper.appendChild(deslikeCountSpan);
-
-    footer.appendChild(likeWrapper);
-    footer.appendChild(deslikeWrapper);
-
-    // Monta card final
-    card.appendChild(titulo);
-    card.appendChild(meta);
-    if (imagemElemento) {
-      card.appendChild(imagemElemento);
-    }
-    card.appendChild(texto);
-    card.appendChild(footer);
-
-    return card;
+  if (imgUrl) {
+    const img = document.createElement("img");
+    img.src = imgUrl;
+    img.alt = "Imagem da publicação";
+    img.classList.add("post-imagem");
+    card.appendChild(img);
   }
+
+  // ===== FOOTER DE REAÇÕES NO CANTO INFERIOR ESQUERDO =====
+  const footer = document.createElement("div");
+  footer.style.position = "absolute";
+  footer.style.left = "16px";
+  footer.style.bottom = "10px";
+  footer.style.display = "flex";
+  footer.style.alignItems = "center";
+  footer.style.gap = "12px";
+  footer.style.fontSize = "0.9rem";
+
+  // Like
+  const likeWrapper = document.createElement("span");
+  likeWrapper.style.display = "inline-flex";
+  likeWrapper.style.alignItems = "center";
+  likeWrapper.style.gap = "4px";
+
+  const likeBtn = document.createElement("span");
+  likeBtn.textContent = "👍";
+  likeBtn.style.cursor = "pointer";
+  likeBtn.style.fontSize = "1.1rem";
+
+  const likeCountSpan = document.createElement("span");
+  likeCountSpan.textContent = post.qtdLikes;
+
+  // Deslike
+  const deslikeWrapper = document.createElement("span");
+  deslikeWrapper.style.display = "inline-flex";
+  deslikeWrapper.style.alignItems = "center";
+  deslikeWrapper.style.gap = "4px";
+
+  const deslikeBtn = document.createElement("span");
+  deslikeBtn.textContent = "👎";
+  deslikeBtn.style.cursor = "pointer";
+  deslikeBtn.style.fontSize = "1.1rem";
+
+  const deslikeCountSpan = document.createElement("span");
+  deslikeCountSpan.textContent = post.qtdDislikes;
+
+  // Eventos de clique
+  likeBtn.addEventListener("click", async () => {
+    try {
+      likeBtn.style.pointerEvents = "none";
+      deslikeBtn.style.pointerEvents = "none";
+
+      const data = await enviarReacaoPost(post.id, "like");
+      if (typeof data.likeCount === "number") {
+        likeCountSpan.textContent = data.likeCount;
+      }
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao registrar like. Tente novamente.");
+    } finally {
+      likeBtn.style.pointerEvents = "auto";
+      deslikeBtn.style.pointerEvents = "auto";
+    }
+  });
+
+  deslikeBtn.addEventListener("click", async () => {
+    try {
+      likeBtn.style.pointerEvents = "none";
+      deslikeBtn.style.pointerEvents = "none";
+
+      const data = await enviarReacaoPost(post.id, "deslike");
+      if (typeof data.deslikeCount === "number") {
+        deslikeCountSpan.textContent = data.deslikeCount;
+      }
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao registrar deslike. Tente novamente.");
+    } finally {
+      likeBtn.style.pointerEvents = "auto";
+      deslikeBtn.style.pointerEvents = "auto";
+    }
+  });
+
+  // Monta wrappers
+  likeWrapper.appendChild(likeBtn);
+  likeWrapper.appendChild(likeCountSpan);
+
+  deslikeWrapper.appendChild(deslikeBtn);
+  deslikeWrapper.appendChild(deslikeCountSpan);
+
+  footer.appendChild(likeWrapper);
+  footer.appendChild(deslikeWrapper);
+
+  // Monta card final
+  card.appendChild(titulo);
+  card.appendChild(meta);
+  card.appendChild(texto);
+  card.appendChild(footer);
+
+  return card;
+}
+
+
 
   // ===================== FUNÇÃO PARA CARREGAR O FEED =====================
 
