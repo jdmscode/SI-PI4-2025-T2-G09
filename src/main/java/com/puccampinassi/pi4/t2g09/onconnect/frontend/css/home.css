@@ -223,3 +223,30 @@ button:hover {
   padding: 8px 16px;
   font-size: 14px;
 }
+
+/* ================== IMAGENS DOS POSTS ================== */
+
+/* Imagem dentro dos cards do feed (home) */
+.post-card img {
+  max-width: 100%;
+  max-height: 250px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-top: 10px;
+  display: block;
+}
+
+/* Imagem na página de detalhes/comentários */
+.post-detalhe-imagem {
+  max-width: 100%;
+  max-height: 350px;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  object-fit: cover;
+  margin: 12px 0;
+  display: block;
+}
+

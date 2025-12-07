@@ -40,6 +40,14 @@ public class PostController {
         return ResponseEntity.ok(postService.listar());
     }
 
+    // DETALHE DO POST
+    @GetMapping("/{id}")
+    public ResponseEntity<Post> buscarPorId(@PathVariable Long id) {
+        return postService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         postService.deletar(id);

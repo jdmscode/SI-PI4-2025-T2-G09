@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   if (!usuarioLogado) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return;
   }
 
@@ -26,12 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     nomeUsuarioElemento.textContent = usuarioLogado.nomeCompleto || "Usuário";
   }
 
-  // Logout
+  // ===================== LOGOUT =====================
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("usuarioLogado");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     });
   }
 

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.Optional;
+
 
 import java.util.List;
 
@@ -65,6 +67,10 @@ public class PostService {
         return repository.save(post);
     }
     
+
+    public Optional<Post> buscarPorId(Long id) {
+        return repository.findById(id);
+    }
 
     public List<Post> listar() {
         return repository.findAll();
